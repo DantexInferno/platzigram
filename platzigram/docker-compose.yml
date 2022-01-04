@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  web:
+    container_name: platzigram
+    build: .
+    working_dir: /platzigram
+    command: "python manage.py runserver 0.0.0.0:8050"
+    volumes:
+      - .:/platzigram
+    ports:
+      - '8050:8050'
+    expose: 
+      - '8050'
+    links:
+      - mysql2
+    depends_on:
+      - mysql2
+    networks:
+      greater:
+        ipv4_address: 192.188.10.3
+  
+  mysql2:
+    container_name: mysql5
+    image: 'mysql:5.7'
+    ports:
+      - '3309:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - my-datavolumes:/var/lib/mysql
+    networks:
+      greater:
+        ipv4_address: 192.188.10.4
+
+volumes:
+  my-datavolumes:
+
+networks: 
+  greater:
+    driver: bridge
+    ipam:
+      driver: default
+      config: 
+        - subnet: 192.188.10.0/24
